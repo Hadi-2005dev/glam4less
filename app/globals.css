@@ -1,26 +1,61 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-display-family: var(--font-playfair-display), Georgia, serif;
+  --font-sans-family: var(--font-dm-sans), system-ui, sans-serif;
+  --background: #fef5f7;
+  --foreground: #2a1520;
+  --card: #ffffff;
+  --card-foreground: #2a1520;
+  --popover: #ffffff;
+  --popover-foreground: #2a1520;
+  --primary: #c84b6e;
+  --primary-foreground: #ffffff;
+  --secondary: #fdeaee;
+  --secondary-foreground: #2a1520;
+  --muted: #f5e4ea;
+  --muted-foreground: #8b6070;
+  --accent: #f0afc0;
+  --accent-foreground: #2a1520;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(200, 75, 110, 0.13);
+  --input: transparent;
+  --input-background: #fdeaee;
+  --switch-background: #f0afc0;
+  --ring: rgba(200, 75, 110, 0.35);
+  --radius: 1rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-display: var(--font-display-family);
+  --font-sans: var(--font-sans-family);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans-family);
 }
