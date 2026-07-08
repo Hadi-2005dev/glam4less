@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 import { Pencil, Trash2, Plus, LogOut, X, Upload, Eye, ShoppingCart, DollarSign } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
+
+const supabase = createClient();
 
 type ProductVariant = {
   name: string;
@@ -59,7 +61,7 @@ type PageView = {
   created_at: string;
 };
 
-const CATEGORIES = ["Lips", "Eyes", "Face", "Skincare", "Sets"];
+const CATEGORIES = ["Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist"];
 const ORDER_STATUSES = ["pending", "confirmed", "delivered", "cancelled"];
 
 function startOfDay(d: Date) {

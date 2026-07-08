@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Sparkles, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { ProductDetail, type Product } from "../../components/product";
 import { Footer } from "../../components/Footer";
 import { useCart } from "../../context/CartContext";
@@ -15,9 +15,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border flex items-center justify-between px-4 md:px-6 lg:px-10 h-16">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-            <Sparkles size={14} className="text-white" />
-          </div>
+          <img src="/icon.png" alt="Glam4Less" className="w-7 h-7 rounded-full" />
           <span
             className="text-xl font-bold text-primary tracking-wide"
             style={{ fontFamily: "var(--font-display-family)" }}

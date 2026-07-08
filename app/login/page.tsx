@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import { Sparkles } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+
+const supabase = createClient();
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,10 +32,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <Sparkles size={16} className="text-white" />
-          </div>
+        <div className="flex flex-col items-center gap-2 mb-8">
+          <img src="/logo-mark.png" alt="Glam4Less" className="w-20 h-20 rounded-2xl object-cover shadow-sm" />
           <span
             className="text-2xl font-bold text-primary tracking-wide"
             style={{ fontFamily: "var(--font-display-family)" }}

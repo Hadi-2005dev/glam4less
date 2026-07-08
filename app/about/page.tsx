@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Sparkles, Tag, Zap, MessageCircle } from "lucide-react";
+import { ChevronLeft, Tag, Zap, MessageCircle } from "lucide-react";
 import { Footer } from "../components/Footer";
 
 const HIGHLIGHTS = [
@@ -53,9 +53,7 @@ export default function AboutPage() {
           </div>
 
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <Sparkles size={16} className="text-white" />
-            </div>
+            <img src="/icon.png" alt="Glam4Less" className="w-8 h-8 rounded-full" />
             <span
               className="text-xl font-bold text-primary tracking-wide"
               style={{ fontFamily: "var(--font-display-family)" }}

@@ -2,7 +2,9 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
+
+const supabase = createClient();
 
 export function VisitTracker() {
   const pathname = usePathname();

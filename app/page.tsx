@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { Footer, WhatsAppIcon } from "./components/Footer";
+import { HeroCarousel } from "./components/HeroCarousel";
+import { MenuDrawer } from "./components/MenuDrawer";
 import { useCart } from "./context/CartContext";
 import {
   type Product,
@@ -35,13 +38,15 @@ import {
   MessageSquare,
   Clock,
   Check,
-  Sparkles,
+  Menu,
 } from "lucide-react";
 
-type Page = "catalog" | "cart" | "checkout" | "confirmation";
-type Category = "All" | "Lips" | "Eyes" | "Face" | "Skincare" | "Sets";
+const supabase = createClient();
 
-const CATEGORIES: Category[] = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets"];
+type Page = "catalog" | "cart" | "checkout" | "confirmation";
+type Category = "All" | "Lips" | "Eyes" | "Face" | "Skincare" | "Sets" | "Body Mist";
+
+const CATEGORIES: Category[] = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist"];
 
 function ProductCard({
   product,
@@ -152,6 +157,8 @@ function Header({
   setCategory: (c: Category) => void;
   showSearch: boolean;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <>
       {/* Desktop header */}
@@ -160,9 +167,7 @@ function Header({
           onClick={onLogoClick}
           className="flex items-center gap-2 shrink-0 group"
         >
-          <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-            <Sparkles size={14} className="text-white" />
-          </div>
+          <img src="/icon.png" alt="Glam4Less" className="w-7 h-7 rounded-full" />
           <span
             className="text-xl font-bold text-primary tracking-wide"
             style={{ fontFamily: "var(--font-display-family)" }}
@@ -222,10 +227,15 @@ function Header({
       {/* Mobile header */}
       <header className="md:hidden sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
         <div className="flex items-center justify-between px-4 h-14">
+          <button
+            onClick={() => setMenuOpen(true)}
+            className="w-10 h-10 -ml-2 rounded-full flex items-center justify-center hover:bg-secondary transition-colors"
+            aria-label="Open menu"
+          >
+            <Menu size={20} className="text-foreground" />
+          </button>
           <button onClick={onLogoClick} className="flex items-center gap-1.5">
-            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-              <Sparkles size={12} className="text-white" />
-            </div>
+            <img src="/icon.png" alt="Glam4Less" className="w-6 h-6 rounded-full" />
             <span
               className="text-lg font-bold text-primary tracking-wide"
               style={{ fontFamily: "var(--font-display-family)" }}
@@ -263,6 +273,8 @@ function Header({
           </div>
         )}
       </header>
+
+      <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
     </>
   );
 }
@@ -298,29 +310,7 @@ function CatalogPage({
       </div>
 
       {/* Hero banner */}
-      <div className="mx-4 md:mx-6 lg:mx-10 mb-5 md:mb-7 rounded-2xl md:rounded-3xl overflow-hidden relative bg-gradient-to-br from-rose-100 via-pink-50 to-fuchsia-100">
-        <div className="px-6 py-7 md:py-10 flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-[10px] md:text-xs font-semibold text-primary/80 uppercase tracking-[0.15em] mb-1.5">
-              New Arrivals · Summer 2026
-            </p>
-            <h2
-              className="text-2xl md:text-4xl font-bold text-foreground mb-2 leading-tight"
-              style={{ fontFamily: "var(--font-display-family)" }}
-            >
-              Feel Beautiful,
-              <br />
-              Pay Less.
-            </h2>
-            <p className="text-sm text-muted-foreground">Up to 40% off premium beauty</p>
-          </div>
-          <div className="text-5xl md:text-7xl ml-4 select-none">💄</div>
-        </div>
-        <div className="absolute bottom-3 right-6 flex gap-1.5">
-          <span className="text-base select-none">✨</span>
-          <span className="text-sm select-none">🌸</span>
-        </div>
-      </div>
+      <HeroCarousel />
 
       {/* Results count */}
       <div className="px-4 md:px-6 lg:px-10 mb-3">
@@ -961,15 +951,25 @@ function ConfirmationPage({
   );
 }
 
-export default function App() {
+function AppContent() {
   const { cart, totalItems, totalPrice, addToCart, removeFromCart, updateQuantity, clearCart } =
     useCart();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState<Page>("catalog");
   const [category, setCategory] = useState<Category>("All");
   const [search, setSearch] = useState("");
   const [cartOpen, setCartOpen] = useState(false);
+
+  // Lets links like "/?category=Lips" or "/?search=gloss" (from the menu
+  // drawer, or shared externally) drive the catalog filters.
+  useEffect(() => {
+    const cat = searchParams.get("category");
+    const q = searchParams.get("search");
+    if (cat) setCategory(cat as Category);
+    if (q !== null) setSearch(q);
+  }, [searchParams]);
   const [orderForm, setOrderForm] = useState({
     name: "",
     phone: "",
@@ -1150,5 +1150,13 @@ export default function App() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Suspense fallback={null}>
+      <AppContent />
+    </Suspense>
   );
 }

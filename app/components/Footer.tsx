@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Instagram, Users } from "lucide-react";
+import { Instagram, Users } from "lucide-react";
 
 export const INSTAGRAM_URL = "https://www.instagram.com/glam4less.lb/";
 export const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/DXT76PWDbKLExLyosyLAiz";
@@ -18,9 +18,7 @@ export function Footer() {
       <div className="max-w-4xl mx-auto flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left sm:justify-center gap-10 sm:gap-20">
         <div className="flex flex-col items-center sm:items-start">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-              <Sparkles size={14} className="text-white" />
-            </div>
+            <img src="/icon.png" alt="Glam4Less" className="w-7 h-7 rounded-full" />
             <span
               className="text-lg font-bold text-primary tracking-wide"
               style={{ fontFamily: "var(--font-display-family)" }}
@@ -42,6 +40,12 @@ export function Footer() {
             className="text-sm text-foreground hover:text-primary transition-colors"
           >
             About Us
+          </Link>
+          <Link
+            href="/shipping"
+            className="text-sm text-foreground hover:text-primary transition-colors"
+          >
+            Shipping &amp; Returns
           </Link>
         </div>
 
