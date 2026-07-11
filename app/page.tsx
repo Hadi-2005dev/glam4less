@@ -989,11 +989,15 @@ function AppContent() {
 
   const handleCategoryChange = (cat: Category) => {
     setCategory(cat);
+    // Always keep an explicit ?category= param (even for "All") rather than
+    // ever navigating to the bare "/" — Next.js's production Link/router
+    // treats a same-pathname navigation to an empty query as a no-op when
+    // the page is already at that pathname with a query string, silently
+    // dropping the navigation (reproduced on the live site; not an issue
+    // in `next dev`). Keeping the query non-empty sidesteps it entirely.
     const params = new URLSearchParams(searchParams.toString());
-    if (cat === "All") params.delete("category");
-    else params.set("category", cat);
-    const qs = params.toString();
-    router.replace(qs ? `/?${qs}` : "/", { scroll: false });
+    params.set("category", cat);
+    router.replace(`/?${params.toString()}`, { scroll: false });
   };
   const [orderForm, setOrderForm] = useState({
     name: "",

@@ -68,7 +68,7 @@ export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => vo
           {MENU_CATEGORIES.map((cat) => (
             <Link
               key={cat}
-              href={cat === "All" ? "/" : `/?category=${encodeURIComponent(cat)}`}
+              href={`/?category=${encodeURIComponent(cat)}`}
               onClick={onClose}
               className="block px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-secondary transition-colors"
             >
