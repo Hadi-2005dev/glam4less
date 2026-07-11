@@ -230,7 +230,7 @@ export function ProductDetail({
             <img
               src={displayImage}
               alt={product.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
