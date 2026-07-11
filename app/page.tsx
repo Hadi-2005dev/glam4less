@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Footer, WhatsAppIcon } from "./components/Footer";
 import { HeroCarousel } from "./components/HeroCarousel";
@@ -48,6 +48,16 @@ type Category = "All" | "Lips" | "Eyes" | "Face" | "Skincare" | "Sets" | "Body M
 
 const CATEGORIES: Category[] = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist"];
 
+// Next.js doesn't restore catalog scroll position when returning from a
+// product page (different top-level route = fresh mount), so we save/restore
+// it ourselves via sessionStorage around the round trip.
+const CATALOG_SCROLL_KEY = "g4l_catalog_scroll";
+function saveScrollPosition() {
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(CATALOG_SCROLL_KEY, String(window.scrollY));
+  }
+}
+
 function ProductCard({
   product,
   onAddToCart,
@@ -71,7 +81,7 @@ function ProductCard({
   return (
     <div className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border group hover:shadow-md transition-all duration-200">
       <div className={`relative ${placeholderBg} aspect-square overflow-hidden`}>
-        <Link href={`/product/${product.id}`} className="absolute inset-0 block">
+        <Link href={`/product/${product.id}`} className="absolute inset-0 block" onClick={saveScrollPosition}>
           <img
             src={product.image_url}
             alt={product.title}
@@ -97,6 +107,7 @@ function ProductCard({
             href={`/product/${product.id}`}
             className="absolute bottom-2 right-2 w-7 h-7 rounded-full flex items-center justify-center shadow-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
             title="Choose a shade"
+            onClick={saveScrollPosition}
           >
             <Plus size={13} />
           </Link>
@@ -116,7 +127,7 @@ function ProductCard({
           </button>
         )}
       </div>
-      <Link href={`/product/${product.id}`} className="block p-2.5">
+      <Link href={`/product/${product.id}`} className="block p-2.5" onClick={saveScrollPosition}>
         <p className="text-[10px] text-muted-foreground mb-0.5">{product.category}</p>
         <h3 className="text-xs font-semibold text-foreground leading-tight line-clamp-2 mb-1.5">
           {product.title}
@@ -954,6 +965,7 @@ function ConfirmationPage({
 function AppContent() {
   const { cart, totalItems, totalPrice, addToCart, removeFromCart, updateQuantity, clearCart } =
     useCart();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -963,13 +975,26 @@ function AppContent() {
   const [cartOpen, setCartOpen] = useState(false);
 
   // Lets links like "/?category=Lips" or "/?search=gloss" (from the menu
-  // drawer, or shared externally) drive the catalog filters.
+  // drawer, a shared URL, or the browser back button) drive the catalog
+  // filters. Also mirrors the reverse direction: selecting a category
+  // updates the URL (see handleCategoryChange) so that navigating to a
+  // product and back restores the same filter and scroll position.
   useEffect(() => {
     const cat = searchParams.get("category");
     const q = searchParams.get("search");
-    if (cat) setCategory(cat as Category);
-    if (q !== null) setSearch(q);
+    setCategory((cat as Category) || "All");
+    setSearch(q ?? "");
+    setPage("catalog");
   }, [searchParams]);
+
+  const handleCategoryChange = (cat: Category) => {
+    setCategory(cat);
+    const params = new URLSearchParams(searchParams.toString());
+    if (cat === "All") params.delete("category");
+    else params.set("category", cat);
+    const qs = params.toString();
+    router.replace(qs ? `/?${qs}` : "/", { scroll: false });
+  };
   const [orderForm, setOrderForm] = useState({
     name: "",
     phone: "",
@@ -991,6 +1016,20 @@ function AppContent() {
     }
     fetchProducts();
   }, []);
+
+  // Restore the scroll position saved (via saveScrollPosition) right before
+  // navigating to a product, once the catalog is back and its content has
+  // loaded. Runs once per mount of this route (see CATALOG_SCROLL_KEY).
+  const restoredScrollRef = useRef(false);
+  useEffect(() => {
+    if (page !== "catalog" || loading || restoredScrollRef.current) return;
+    restoredScrollRef.current = true;
+    const saved = sessionStorage.getItem(CATALOG_SCROLL_KEY);
+    if (saved) {
+      sessionStorage.removeItem(CATALOG_SCROLL_KEY);
+      requestAnimationFrame(() => window.scrollTo(0, Number(saved)));
+    }
+  }, [page, loading]);
 
   const filteredProducts = products.filter((p) => {
     const matchesCategory = category === "All" || p.category === category;
@@ -1064,7 +1103,7 @@ function AppContent() {
           <CatalogPage
             products={filteredProducts}
             category={category}
-            setCategory={setCategory}
+            setCategory={handleCategoryChange}
             onAddToCart={addToCart}
           />
         );
@@ -1114,7 +1153,7 @@ function AppContent() {
           search={search}
           setSearch={setSearch}
           category={category}
-          setCategory={setCategory}
+          setCategory={handleCategoryChange}
           showSearch={page === "catalog"}
         />
       )}

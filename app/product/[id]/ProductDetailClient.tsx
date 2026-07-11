@@ -11,6 +11,18 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const router = useRouter();
   const { addToCart, totalItems } = useCart();
 
+  // Prefer a real browser back-navigation so the catalog is restored with
+  // the same category filter and scroll position the user left it at.
+  // Falls back to a fresh "/" when there's no in-app history (e.g. the
+  // product page was opened directly from a shared link).
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border flex items-center justify-between px-4 md:px-6 lg:px-10 h-16">
@@ -40,7 +52,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       <div className="flex-1">
         <ProductDetail
           product={product}
-          onBack={() => router.push("/")}
+          onBack={handleBack}
           onAddToCart={addToCart}
         />
       </div>
