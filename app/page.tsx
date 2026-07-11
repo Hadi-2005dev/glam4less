@@ -44,9 +44,9 @@ import {
 const supabase = createClient();
 
 type Page = "catalog" | "cart" | "checkout" | "confirmation";
-type Category = "All" | "Lips" | "Eyes" | "Face" | "Skincare" | "Sets" | "Body Mist";
+type Category = "All" | "Lips" | "Eyes" | "Face" | "Skincare" | "Sets" | "Body Mist" | "Perfumes";
 
-const CATEGORIES: Category[] = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist"];
+const CATEGORIES: Category[] = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist", "Perfumes"];
 
 // Next.js doesn't restore catalog scroll position when returning from a
 // product page (different top-level route = fresh mount), so we save/restore
