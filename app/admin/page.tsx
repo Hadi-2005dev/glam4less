@@ -62,7 +62,7 @@ type PageView = {
   created_at: string;
 };
 
-const CATEGORIES = ["Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist", "Perfumes"];
+const CATEGORIES = ["Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist", "Perfumes", "Body Care"];
 const ORDER_STATUSES = ["pending", "confirmed", "delivered", "cancelled"];
 
 function startOfDay(d: Date) {

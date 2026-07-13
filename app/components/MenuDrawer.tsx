@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { X, Search, Instagram, Users, Info, Truck } from "lucide-react";
 import { INSTAGRAM_URL, WHATSAPP_COMMUNITY_URL, WhatsAppIcon } from "./Footer";
 
-const MENU_CATEGORIES = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist", "Perfumes"];
+const MENU_CATEGORIES = ["All", "Lips", "Eyes", "Face", "Skincare", "Sets", "Body Mist", "Perfumes", "Body Care"];
 
 export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
