@@ -104,7 +104,8 @@ export function getCartItemImage(item: CartItem) {
 export function buildWhatsAppMessage(
   cart: CartItem[],
   orderForm: { name: string; phone: string; address: string; notes: string },
-  subtotal: number
+  subtotal: number,
+  trackingUrl?: string
 ) {
   const lines = cart.map(
     ({ product, quantity, variantName }) =>
@@ -127,6 +128,8 @@ export function buildWhatsAppMessage(
     `Phone: ${orderForm.phone}`,
     `Address: ${orderForm.address}`,
     orderForm.notes ? `Notes: ${orderForm.notes}` : null,
+    trackingUrl ? "" : null,
+    trackingUrl ? `Track your order: ${trackingUrl}` : null,
   ]
     .filter((line): line is string => line !== null)
     .join("\n");

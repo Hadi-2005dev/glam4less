@@ -846,11 +846,13 @@ function ConfirmationPage({
   orderForm,
   orderedItems,
   totalPrice,
+  orderId,
   onContinueShopping,
 }: {
   orderForm: { name: string; phone: string; address: string; notes: string };
   orderedItems: CartItem[];
   totalPrice: number;
+  orderId: string | null;
   onContinueShopping: () => void;
 }) {
   const firstName = orderForm.name.split(" ")[0] || "there";
@@ -951,6 +953,15 @@ function ConfirmationPage({
           </div>
         </div>
 
+        {orderId && (
+          <Link
+            href={`/order/${orderId}`}
+            className="block w-full text-center py-3.5 mb-3 border-2 border-primary text-primary rounded-2xl font-semibold text-sm hover:bg-primary/5 transition-colors"
+          >
+            Track your order
+          </Link>
+        )}
+
         <button
           onClick={onContinueShopping}
           className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-semibold text-base hover:bg-primary/90 active:scale-[0.98] transition-all"
@@ -1007,6 +1018,7 @@ function AppContent() {
   });
   const [confirmedCart, setConfirmedCart] = useState<CartItem[]>([]);
   const [confirmedTotal, setConfirmedTotal] = useState(0);
+  const [confirmedOrderId, setConfirmedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -1058,20 +1070,25 @@ function AppContent() {
 
   const handlePlaceOrder = () => {
     const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-    const message = buildWhatsAppMessage(cart, orderForm, totalPrice);
+    // Generated up front (rather than read back after the insert) so it can
+    // be included in the WhatsApp message, which must be opened synchronously
+    // below — before any await — so mobile browsers don't block the popup.
+    const orderId = crypto.randomUUID();
+    const trackingUrl = `${window.location.origin}/order/${orderId}`;
+    const message = buildWhatsAppMessage(cart, orderForm, totalPrice, trackingUrl);
 
-    // Open synchronously (before any await) so mobile browsers don't treat
-    // it as a blocked popup — it must stay tied to the user click.
     window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`, "_blank");
 
     setConfirmedCart([...cart]);
     setConfirmedTotal(totalPrice);
+    setConfirmedOrderId(orderId);
     clearCart();
     setPage("confirmation");
 
     supabase
       .from("orders")
       .insert({
+        id: orderId,
         customer_name: orderForm.name,
         customer_phone: orderForm.phone,
         address: orderForm.address,
@@ -1139,6 +1156,7 @@ function AppContent() {
             orderForm={orderForm}
             orderedItems={confirmedCart}
             totalPrice={confirmedTotal}
+            orderId={confirmedOrderId}
             onContinueShopping={() => setPage("catalog")}
           />
         );
