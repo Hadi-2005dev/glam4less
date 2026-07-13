@@ -66,6 +66,8 @@ export default async function OrderStatusPage({
 }) {
   const { id } = await params;
   const order = await getOrderStatus(id);
+  const subtotal = order?.items.reduce((s, i) => s + i.price * i.quantity, 0) ?? 0;
+  const deliveryFee = order ? order.total - subtotal : 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -142,9 +144,23 @@ export default async function OrderStatusPage({
                     </div>
                   ))}
                 </div>
-                <div className="px-5 py-4 border-t border-border flex justify-between font-bold">
-                  <span>Total</span>
-                  <span className="text-primary">${order.total.toFixed(2)}</span>
+                <div className="px-5 py-4 border-t border-border space-y-1.5">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">${subtotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Delivery</span>
+                    {deliveryFee <= 0 ? (
+                      <span className="text-green-600 font-semibold">Free</span>
+                    ) : (
+                      <span className="font-medium">${deliveryFee.toFixed(2)}</span>
+                    )}
+                  </div>
+                  <div className="flex justify-between font-bold pt-2 border-t border-border mt-1">
+                    <span>Total</span>
+                    <span className="text-primary">${order.total.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
 
