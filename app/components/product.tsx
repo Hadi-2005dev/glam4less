@@ -333,12 +333,6 @@ export function ProductDetail({
                   </button>
                 </div>
               </div>
-
-              {stock <= 5 && (
-                <p className="text-xs text-amber-600 font-medium mb-3">
-                  Only {stock} left in stock
-                </p>
-              )}
             </>
           )}
 
