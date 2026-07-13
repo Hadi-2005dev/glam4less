@@ -1083,6 +1083,7 @@ function AppContent() {
     setConfirmedTotal(totalPrice);
     setConfirmedOrderId(orderId);
     clearCart();
+    setCartOpen(false);
     setPage("confirmation");
 
     supabase
