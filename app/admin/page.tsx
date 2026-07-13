@@ -41,6 +41,7 @@ type OrderItem = {
   title: string;
   price: number;
   quantity: number;
+  variant?: string | null;
 };
 
 type Order = {
@@ -527,9 +528,10 @@ export default function AdminPage() {
                     <p className="text-xs text-muted-foreground max-w-[200px]">{o.address}</p>
                   </td>
                   <td className="p-3 text-muted-foreground">
-                    {o.items.map((item) => (
-                      <p key={item.id} className="whitespace-nowrap">
-                        {item.title} x{item.quantity}
+                    {o.items.map((item, i) => (
+                      <p key={`${item.id}-${item.variant ?? i}`} className="whitespace-nowrap">
+                        {item.title}
+                        {item.variant ? ` (${item.variant})` : ""} x{item.quantity}
                       </p>
                     ))}
                   </td>
