@@ -528,12 +528,27 @@ export default function AdminPage() {
                     <p className="text-xs text-muted-foreground max-w-[200px]">{o.address}</p>
                   </td>
                   <td className="p-3 text-muted-foreground">
-                    {o.items.map((item, i) => (
-                      <p key={`${item.id}-${item.variant ?? i}`} className="whitespace-nowrap">
-                        {item.title}
-                        {item.variant ? ` (${item.variant})` : ""} x{item.quantity}
-                      </p>
-                    ))}
+                    {o.items.map((item, i) => {
+                      const itemImage = products.find((p) => p.id === item.id)?.image_url;
+                      return (
+                        <div
+                          key={`${item.id}-${item.variant ?? i}`}
+                          className="flex items-center gap-2 whitespace-nowrap"
+                        >
+                          {itemImage && (
+                            <img
+                              src={itemImage}
+                              alt=""
+                              className="w-7 h-7 rounded-md object-cover shrink-0"
+                            />
+                          )}
+                          <p>
+                            {item.title}
+                            {item.variant ? ` (${item.variant})` : ""} x{item.quantity}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </td>
                   <td className="p-3 font-semibold text-primary whitespace-nowrap">
                     ${o.total.toFixed(2)}
